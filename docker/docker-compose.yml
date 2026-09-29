@@ -1,0 +1,11 @@
+version: '3.8'
+services:
+  converterDb:
+    image: postgres:16
+    container_name: converter_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: converter_db
+    ports:
+      - "1023:5432"

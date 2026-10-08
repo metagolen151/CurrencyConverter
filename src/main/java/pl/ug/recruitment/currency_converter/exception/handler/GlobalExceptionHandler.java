@@ -7,6 +7,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import pl.ug.recruitment.currency_converter.exception.XmlGenerationException;
 import pl.ug.recruitment.currency_converter.exception.dto.ExceptionResponse;
 
 import java.time.LocalDateTime;
@@ -41,5 +42,20 @@ public class GlobalExceptionHandler {
                         LocalDateTime.now(),
                         HttpStatus.BAD_REQUEST.value()
                 ));
+    }
+
+    @ExceptionHandler(XmlGenerationException.class)
+    public ResponseEntity<ExceptionResponse> handleXmlGenerationException(
+            XmlGenerationException exception) {
+
+        ExceptionResponse response = new ExceptionResponse(
+                "Failed to generate XML file",
+                LocalDateTime.now(),
+                HttpStatus.INTERNAL_SERVER_ERROR.value()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(response);
     }
 }

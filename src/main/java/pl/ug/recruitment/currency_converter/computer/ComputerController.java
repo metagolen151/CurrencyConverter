@@ -2,13 +2,15 @@ package pl.ug.recruitment.currency_converter.computer;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pl.ug.recruitment.currency_converter.dto.ComputerResponse;
-import pl.ug.recruitment.currency_converter.dto.RegisterComputerRequest;
+import pl.ug.recruitment.currency_converter.computer.dto.ComputerResponse;
+import pl.ug.recruitment.currency_converter.computer.dto.RegisterComputerRequest;
+import org.springframework.data.domain.Pageable;
 
-import java.util.List;
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("api/v1/computers")
@@ -25,9 +27,17 @@ public class ComputerController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ComputerResponse>> getAllComputers() {
+    public ResponseEntity<Page<ComputerResponse>> getAllComputers(
+            Pageable pageable,
+            @RequestParam(defaultValue = "") String name,
+            @RequestParam(required = false) LocalDate bookingDate
+    ) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(computerService.getAllComputers());
+                .body(computerService.getAllComputers(
+                        name,
+                        bookingDate,
+                        pageable
+                ));
     }
 }

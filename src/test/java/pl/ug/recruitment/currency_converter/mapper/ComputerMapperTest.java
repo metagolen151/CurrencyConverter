@@ -3,10 +3,12 @@ package pl.ug.recruitment.currency_converter.mapper;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import pl.ug.recruitment.currency_converter.computer.Computer;
-import pl.ug.recruitment.currency_converter.dto.ComputerResponse;
-import pl.ug.recruitment.currency_converter.dto.RegisterComputerRequest;
+import pl.ug.recruitment.currency_converter.computer.dto.ComputerResponse;
+import pl.ug.recruitment.currency_converter.computer.dto.RegisterComputerRequest;
 import pl.ug.recruitment.currency_converter.fixture.ComputerFixture;
+import pl.ug.recruitment.currency_converter.fixture.ComputerResponseFixture;
 import pl.ug.recruitment.currency_converter.fixture.RegisterComputerRequestFixture;
+import pl.ug.recruitment.currency_converter.xml.dto.ComputerXml;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -110,5 +112,26 @@ class ComputerMapperTest {
         List<ComputerResponse> computersResponse = mapper.toListOfComputerResponse(null);
         //then
         assertNull(computersResponse);
+    }
+
+    @Test
+    void shouldMapComputerResponseToComputerXml() {
+        // given
+        ComputerResponse response = new ComputerResponseFixture().build();
+        // when
+        ComputerXml result = mapper.toComputerXml(response);
+        // then
+        assertEquals(response.name(), result.name());
+        assertEquals(response.bookingDate(), result.bookingDate());
+        assertEquals(response.costUsd(), result.costUsd());
+        assertEquals(response.costPln(), result.costPln());
+    }
+
+    @Test
+    void shouldReturnNullWhenComputerResponseIsNull() {
+        // when
+        ComputerXml result = mapper.toComputerXml(null);
+        // then
+        assertNull(result);
     }
 }

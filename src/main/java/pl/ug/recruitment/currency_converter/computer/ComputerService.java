@@ -1,17 +1,21 @@
 package pl.ug.recruitment.currency_converter.computer;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.ug.recruitment.currency_converter.dto.ComputerResponse;
-import pl.ug.recruitment.currency_converter.dto.RegisterComputerRequest;
+import pl.ug.recruitment.currency_converter.computer.dto.ComputerResponse;
+import pl.ug.recruitment.currency_converter.computer.dto.RegisterComputerRequest;
+import pl.ug.recruitment.currency_converter.exception.XmlGenerationException;
 import pl.ug.recruitment.currency_converter.mapper.ComputerMapper;
 import pl.ug.recruitment.currency_converter.webclient.NbpWebClient;
+import pl.ug.recruitment.currency_converter.xml.XmlService;
 
+import org.springframework.data.domain.Pageable;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -23,12 +27,15 @@ public class ComputerService {
 
     private final WorkingDayService workingDayService;
 
+    private final XmlService xmlService;
+
     private final ComputerMapper computerMapper;
 
     @Transactional
     public ComputerResponse registerComputer(RegisterComputerRequest request) {
         LocalDate date = request.bookingDate();
 
+        //TODO dodać obsługę dni świątecznych
         while(!workingDayService.isWorkingDay(date)) {
             date = date.minusDays(1);
         }
@@ -45,12 +52,28 @@ public class ComputerService {
 
         Computer savedComputer = repository.save(computer);
 
-        return computerMapper.toComputerResponse(savedComputer);
+        ComputerResponse response = computerMapper.toComputerResponse(savedComputer);
+
+        try {
+            xmlService.generateXml(computerMapper.toComputerXml(response));
+        } catch (IOException e) {
+            throw new XmlGenerationException(e);
+        }
+
+        return response;
     }
 
-    public List<ComputerResponse> getAllComputers() {
-        List<Computer> computers = repository.findAll();
+    public Page<ComputerResponse> getAllComputers(
+            String name,
+            LocalDate bookingDate,
+            Pageable pageable
+    ) {
+        Page<Computer> computers = repository.search(
+                name,
+                bookingDate,
+                pageable
+        );
 
-        return computerMapper.toListOfComputerResponse(computers);
+        return computers.map(computerMapper::toComputerResponse);
     }
 }

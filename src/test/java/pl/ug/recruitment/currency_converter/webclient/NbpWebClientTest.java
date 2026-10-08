@@ -2,7 +2,6 @@ package pl.ug.recruitment.currency_converter.webclient;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.client.RestTemplate;
@@ -22,12 +21,13 @@ class NbpWebClientTest {
     @Mock
     private RestTemplate restTemplate;
 
-    @InjectMocks
-    private NbpWebClient nbpWebClient;
-
     @Test
     void shouldReturnExchangeRate() {
         //given
+        NbpWebClient nbpWebClient = new NbpWebClient(
+                restTemplate,
+                "https://api.nbp.pl/api/exchangerates/rates/A/USD/{date}/"
+        );
         LocalDate date = LocalDate.of(2026, 7, 13);
         BigDecimal rate = new BigDecimal("3.654");
 
@@ -39,8 +39,10 @@ class NbpWebClientTest {
                 NbpRateResponse.class,
                 date
         )).thenReturn(response);
+
         //when
         BigDecimal result = nbpWebClient.getExchangeRateForDate(date);
+
         //then
         assertEquals(rate, result);
     }

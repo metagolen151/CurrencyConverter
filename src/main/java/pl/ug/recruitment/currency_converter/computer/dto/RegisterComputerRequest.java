@@ -1,4 +1,4 @@
-package pl.ug.recruitment.currency_converter.dto;
+package pl.ug.recruitment.currency_converter.computer.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

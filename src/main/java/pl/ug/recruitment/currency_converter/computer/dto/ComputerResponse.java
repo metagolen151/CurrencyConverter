@@ -1,4 +1,4 @@
-package pl.ug.recruitment.currency_converter.dto;
+package pl.ug.recruitment.currency_converter.computer.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

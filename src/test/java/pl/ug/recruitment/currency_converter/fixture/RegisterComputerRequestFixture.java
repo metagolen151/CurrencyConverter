@@ -3,7 +3,7 @@ package pl.ug.recruitment.currency_converter.fixture;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.With;
-import pl.ug.recruitment.currency_converter.dto.RegisterComputerRequest;
+import pl.ug.recruitment.currency_converter.computer.dto.RegisterComputerRequest;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
